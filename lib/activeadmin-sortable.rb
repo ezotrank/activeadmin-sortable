@@ -7,7 +7,20 @@ module ActiveAdmin
     module ControllerActions
       def sortable
         member_action :sort, :method => :post do
-          resource.insert_at params[:position].to_i
+          if resource.class.name == 'MovieEpisode'
+            episodes = resource.movie.episodes.delete_if {|e| e == resource}
+            index = 0
+            episodes.each do |episode|
+              if index == params[:position].to_i
+                resource.update_attribute(:position, index)
+                index += 1
+              end
+              episode.update_attribute(:position, index)
+              index += 1
+            end
+          else
+            resource.insert_at params[:position].to_i
+          end
           head 200
         end
       end
@@ -32,5 +45,3 @@ module ActiveAdmin
     end
   end
 end
-
-
