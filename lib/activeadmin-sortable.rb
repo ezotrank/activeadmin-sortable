@@ -8,7 +8,7 @@ module ActiveAdmin
       def sortable
         member_action :sort, :method => :post do
           if resource.class.name == 'MovieEpisode'
-            episodes = resource.movie.episodes.delete_if {|e| e == resource}
+            episodes = resource.movie.episodes.order('position ASC').delete_if {|e| e == resource}
             index = 0
             episodes.each do |episode|
               if index == params[:position].to_i
